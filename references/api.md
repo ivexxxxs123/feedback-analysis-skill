@@ -20,9 +20,10 @@ GET /api/health
    - `file`: CSV/XLS/XLSX file
    - `mode=preview`
 2. After user confirmation, repeat with `mode=import`.
-3. `POST /api/analysis/run`
-4. `POST /api/pain-points/cluster`
-5. `POST /api/priority/calculate`
+3. Read `analysisId` from the import response.
+4. Send `x-analysis-id: <analysisId>` to `POST /api/analysis/run`.
+5. Send the same header to `POST /api/pain-points/cluster`.
+6. Send the same header to `POST /api/priority/calculate`.
 6. Optional: `POST /api/strategies`
 
 Use the corresponding `GET` endpoints to read status and results. Follow the API response's `error` field and HTTP status instead of assuming success.
@@ -39,4 +40,4 @@ The user must complete authorization in the browser and bind their own `app_toke
 
 ## Current deployment boundary
 
-The current demo has browser/Feishu-based project selection but no general account login or API token authentication. Do not use it for sensitive or multi-tenant production data until the backend adds authentication, authorization, and rate limiting.
+The current demo has browser/Feishu-based project selection but no general account login or API token authentication. The analysis ID isolates tasks but is a bearer link; do not use it for sensitive production data until the backend adds authentication, authorization, and rate limiting.

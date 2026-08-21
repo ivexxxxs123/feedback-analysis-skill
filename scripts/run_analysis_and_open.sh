@@ -24,25 +24,32 @@ if [[ "$CONFIRM" != "yes" ]]; then
 fi
 
 echo "正在导入数据……"
-curl -sS -f -X POST \
+IMPORT_RESPONSE="$(curl -sS -f -X POST \
   -F "file=@${INPUT_FILE}" \
   -F "mode=import" \
-  "${API_BASE_URL}/api/feedback/import"
+  "${API_BASE_URL}/api/feedback/import")"
+printf '%s\n' "$IMPORT_RESPONSE"
+ANALYSIS_ID="$(printf '%s' "$IMPORT_RESPONSE" | node -e 'let input=""; process.stdin.on("data", chunk => input += chunk); process.stdin.on("end", () => { try { process.stdout.write(JSON.parse(input).analysisId || ""); } catch {} });')"
+if [[ -z "$ANALYSIS_ID" ]]; then
+  echo "导入成功但没有收到分析任务 ID，无法隔离本次结果。" >&2
+  exit 1
+fi
+REQUEST_HEADER=("-H" "x-analysis-id: ${ANALYSIS_ID}")
 printf '\n'
 
 echo "正在运行反馈分析……"
-curl -sS -f -X POST "${API_BASE_URL}/api/analysis/run"
+curl -sS -f "${REQUEST_HEADER[@]}" -X POST "${API_BASE_URL}/api/analysis/run"
 printf '\n'
 
 echo "正在聚合痛点……"
-curl -sS -f -X POST "${API_BASE_URL}/api/pain-points/cluster"
+curl -sS -f "${REQUEST_HEADER[@]}" -X POST "${API_BASE_URL}/api/pain-points/cluster"
 printf '\n'
 
 echo "正在计算优先级……"
-curl -sS -f -X POST "${API_BASE_URL}/api/priority/calculate"
+curl -sS -f "${REQUEST_HEADER[@]}" -X POST "${API_BASE_URL}/api/priority/calculate"
 printf '\n'
 
-RESULT_URL="${API_BASE_URL}/"
+RESULT_URL="${API_BASE_URL}/api/analysis/access?analysisId=${ANALYSIS_ID}"
 echo "分析完成，正在打开：${RESULT_URL}"
 if command -v open >/dev/null 2>&1; then
   open "$RESULT_URL"

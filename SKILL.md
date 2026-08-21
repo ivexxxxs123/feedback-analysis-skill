@@ -19,9 +19,10 @@ Use this skill to operate the feedback-analysis application through its API whil
 1. Confirm the input file or feedback source and required fields: `user_id`, `user_type`, `is_paid`, `feedback`, and `created_at`.
 2. Preview and validate the data before importing it. Report invalid rows and ask for confirmation before a write.
 3. Import only after confirmation.
-4. Run feedback analysis, then pain-point clustering, then priority calculation. Run strategy generation only when the user asks for strategies.
-5. Summarize counts, high-priority pain points, evidence, and any failed rows. Distinguish rule-based results from AI-generated results.
-6. Before deleting an import batch or triggering a destructive operation, explain the consequence and obtain explicit confirmation.
+4. Ask whether the user wants to connect Feishu. If yes, explain that the website uses that user's own Feishu authorization and open the deployed website for the optional connection. If no, continue with file analysis only.
+5. Run feedback analysis, then pain-point clustering, then priority calculation. Run strategy generation only when the user asks for strategies.
+6. Summarize counts, high-priority pain points, evidence, and any failed rows. Distinguish rule-based results from AI-generated results.
+7. Before deleting an import batch or triggering a destructive operation, explain the consequence and obtain explicit confirmation.
 
 ## Terminal execution mode
 
@@ -36,7 +37,7 @@ When the user asks to run the completed workflow through their terminal:
    ```
 
 4. Tell the user to paste the command into their own terminal. Do not execute it on the user's behalf and do not put API keys or tokens in the command.
-5. The helper previews the file, asks for confirmation, imports it, runs analysis, clustering, and priority calculation, then opens the results page on macOS.
+5. The helper previews the file, asks for confirmation, imports it into a new isolated analysis task, runs analysis, clustering, and priority calculation, then opens that task's results page on macOS.
 
 Use `FEEDBACK_API_BASE_URL` to target a different deployment. The helper defaults to the current Render deployment.
 
@@ -50,7 +51,7 @@ After the command completes, provide these result links:
 ## Data handling
 
 - Do not expose raw feedback, user IDs, Feishu tokens, API keys, or database URLs unless the user explicitly requests a specific record and is authorized to see it.
-- Keep each user's project scope separate when the API provides a user identity or project token.
+- Keep each user's project scope separate. Each import must use the returned `analysisId`; never rely on the shared demo project.
 - Do not claim that data is isolated when the API is running in demo mode.
 
 ## API details
