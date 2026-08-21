@@ -23,6 +23,30 @@ Use this skill to operate the feedback-analysis application through its API whil
 5. Summarize counts, high-priority pain points, evidence, and any failed rows. Distinguish rule-based results from AI-generated results.
 6. Before deleting an import batch or triggering a destructive operation, explain the consequence and obtain explicit confirmation.
 
+## Terminal execution mode
+
+When the user asks to run the completed workflow through their terminal:
+
+1. Complete the analysis plan and show the user what will be imported and processed.
+2. Ask for explicit confirmation before generating a write command.
+3. Generate one copy-pasteable command using the installed helper:
+
+   ```bash
+   bash ~/.codex/skills/feedback-analysis/scripts/run_analysis_and_open.sh "/absolute/path/to/feedback.csv"
+   ```
+
+4. Tell the user to paste the command into their own terminal. Do not execute it on the user's behalf and do not put API keys or tokens in the command.
+5. The helper previews the file, asks for confirmation, imports it, runs analysis, clustering, and priority calculation, then opens the results page on macOS.
+
+Use `FEEDBACK_API_BASE_URL` to target a different deployment. The helper defaults to the current Render deployment.
+
+After the command completes, provide these result links:
+
+- Dashboard: `${FEEDBACK_API_BASE_URL}/`
+- Analysis: `${FEEDBACK_API_BASE_URL}/analysis`
+- Pain points: `${FEEDBACK_API_BASE_URL}/pain-points`
+- Priority: `${FEEDBACK_API_BASE_URL}/priority`
+
 ## Data handling
 
 - Do not expose raw feedback, user IDs, Feishu tokens, API keys, or database URLs unless the user explicitly requests a specific record and is authorized to see it.
@@ -31,4 +55,4 @@ Use this skill to operate the feedback-analysis application through its API whil
 
 ## API details
 
-Read [references/api.md](references/api.md) when making API calls or troubleshooting a failed workflow.
+Read [references/api.md](references/api.md) when making API calls or troubleshooting a failed workflow. Read [references/terminal-mode.md](references/terminal-mode.md) when generating the copy-pasteable terminal command.
