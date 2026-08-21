@@ -2,6 +2,7 @@
 set -euo pipefail
 
 API_BASE_URL="${FEEDBACK_API_BASE_URL:-https://user-feedback-prioritization.onrender.com}"
+SITE_BASE_URL="${FEEDBACK_SITE_URL:-$API_BASE_URL}"
 INPUT_FILE="${1:-}"
 
 if [[ -z "$INPUT_FILE" || ! -f "$INPUT_FILE" ]]; then
@@ -49,7 +50,7 @@ echo "正在计算优先级……"
 curl -sS -f "${REQUEST_HEADER[@]}" -X POST "${API_BASE_URL}/api/priority/calculate"
 printf '\n'
 
-RESULT_URL="${API_BASE_URL}/api/analysis/access?analysisId=${ANALYSIS_ID}"
+RESULT_URL="${SITE_BASE_URL}/api/analysis/access?analysisId=${ANALYSIS_ID}"
 echo "分析完成，正在打开：${RESULT_URL}"
 if command -v open >/dev/null 2>&1; then
   open "$RESULT_URL"

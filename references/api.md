@@ -6,7 +6,8 @@ The default deployment URL is:
 https://user-feedback-prioritization.onrender.com
 ```
 
-Prefer `FEEDBACK_API_BASE_URL` so the skill can be pointed at another deployment.
+The skill uses this deployment automatically. Set `FEEDBACK_API_BASE_URL` only to point at another API deployment.
+If the public website is hosted separately, set `FEEDBACK_SITE_URL` for result links.
 
 ## Health check
 
